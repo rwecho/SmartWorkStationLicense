@@ -1,17 +1,7 @@
-import type { NextRequest } from 'next/server'
-
-export function middleware(request: NextRequest) {
-  const currentUser = request.cookies.get('currentUser')?.value
-
-  if (currentUser && !request.nextUrl.pathname.startsWith('/dashboard')) {
-    return Response.redirect(new URL('/dashboard', request.url))
-  }
-
-  if (!currentUser && !request.nextUrl.pathname.startsWith('/login')) {
-    return Response.redirect(new URL('/login', request.url))
-  }
-}
+export { auth as middleware } from "@/auth";
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
-}
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.svg$|login|register).*)",
+  ],
+};
