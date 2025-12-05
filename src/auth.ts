@@ -9,7 +9,7 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  // adapter: PrismaAdapter(prisma),
   providers: [
     GitHub({
       clientId: process.env.GITHUB_ID!,
@@ -27,7 +27,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("邮箱和密码不能为空");
+          return null;
         }
 
         const user = await prisma.user.findUnique({
@@ -37,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
 
         if (!user || !user.password) {
-          throw new Error("邮箱或密码错误");
+          return null;
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -46,7 +46,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         );
 
         if (!isPasswordValid) {
-          throw new Error("邮箱或密码错误");
+          return null;
         }
 
         return {
@@ -79,4 +79,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return false; // 重定向到登录页
     },
   },
+  debug: true,
 });

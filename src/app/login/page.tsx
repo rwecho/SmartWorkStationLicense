@@ -47,7 +47,13 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        message.error(result.error);
+        // NextAuth 返回的错误信息
+        console.log(result);
+        if (result.error === "CredentialsSignin") {
+          message.error("邮箱或密码错误");
+        } else {
+          message.error("登录失败：" + result.error);
+        }
       } else if (result?.ok) {
         message.success("登录成功！");
         router.push("/");
