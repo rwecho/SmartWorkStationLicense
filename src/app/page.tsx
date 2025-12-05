@@ -79,44 +79,68 @@ const HomePage = () => {
 
   const columns: TableProps<License>["columns"] = [
     {
-      title: "id",
+      title: "ID",
       dataIndex: "id",
       key: "id",
-      render: (text) => <a>{text}</a>,
-      responsive: ["md"],
+      width: 80,
+      render: (text) => <span className="text-xs md:text-sm">{text}</span>,
+      responsive: ["lg"],
     },
     {
       title: "电脑指纹",
       dataIndex: "fingerprint",
       key: "fingerprint",
-      responsive: ["md"],
+      ellipsis: true,
+      render: (text) => <span className="text-xs md:text-sm">{text}</span>,
     },
     {
       title: "注册信息",
       dataIndex: "brand",
       key: "brand",
+      ellipsis: true,
+      render: (text) => (
+        <span className="text-xs md:text-sm">{text || "-"}</span>
+      ),
     },
     {
       title: "创建时间",
       dataIndex: "createdAt",
       key: "createdAt",
-      responsive: ["md"],
-      render: (text) => <span>{new Date(text).toLocaleString()}</span>,
+      responsive: ["lg"],
+      render: (text) => (
+        <span className="text-xs md:text-sm">
+          {new Date(text).toLocaleString("zh-CN", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </span>
+      ),
     },
     {
       title: "操作",
       key: "action",
+      fixed: "right",
+      width: 120,
       render: (text, record) => (
-        <Space>
+        <Space size="small" className="flex-wrap">
           <Button
             type="link"
             danger={true}
             size="small"
             onClick={() => handleDelete(record)}
+            className="text-xs md:text-sm p-0 h-auto"
           >
             删除
           </Button>
-          <Button type="link" size="small" onClick={() => handleCopy(record)}>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => handleCopy(record)}
+            className="text-xs md:text-sm p-0 h-auto"
+          >
             复制
           </Button>
         </Space>
@@ -129,31 +153,48 @@ const HomePage = () => {
   }
 
   return (
-    <>
+    <div className="w-full">
       {loading ? (
-        <Skeleton />
+        <Skeleton active />
       ) : (
-        <Table
-          columns={columns}
-          dataSource={licenses}
-          bordered
-          title={() => (
-            <>
-              <Space>
-                <Button type="primary" onClick={handleCreate} className="!px-8">
-                  创建注册码
-                </Button>
-              </Space>
+        <>
+          <div className="mb-4 flex justify-between items-center">
+            <h1 className="text-lg md:text-xl font-semibold">激活码管理</h1>
+            <Button
+              type="primary"
+              onClick={handleCreate}
+              className="h-8 md:h-10 text-xs md:text-sm px-4 md:px-8"
+            >
+              创建注册码
+            </Button>
+          </div>
 
-              <CreateOrUpdateLicenseModal
-                isOpen={isModalOpen}
-                onClose={(license) => handleLicenseCreated(license)}
-              ></CreateOrUpdateLicenseModal>
-            </>
-          )}
-        />
+          <div className="overflow-x-auto">
+            <Table
+              columns={columns}
+              dataSource={licenses}
+              rowKey="id"
+              bordered
+              scroll={{ x: "max-content" }}
+              pagination={{
+                responsive: true,
+                showSizeChanger: true,
+                showTotal: (total) => (
+                  <span className="text-xs md:text-sm">共 {total} 条</span>
+                ),
+                className: "text-xs md:text-sm",
+              }}
+              className="[&_.ant-table]:text-xs [&_.ant-table]:md:text-sm"
+            />
+          </div>
+
+          <CreateOrUpdateLicenseModal
+            isOpen={isModalOpen}
+            onClose={(license) => handleLicenseCreated(license)}
+          />
+        </>
       )}
-    </>
+    </div>
   );
 };
 

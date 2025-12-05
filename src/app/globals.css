@@ -8,5 +8,7 @@
 body {
 }
 @layer utilities {
-
+  .content-card {
+    min-height: 380px;
+  }
 }

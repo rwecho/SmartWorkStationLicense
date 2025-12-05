@@ -33,31 +33,33 @@ const NavBar = () => {
   ];
 
   return (
-    <div className="bg-white flex w-full items-center">
-      <div className="mx-2">
+    <div className="bg-white flex w-full items-center px-2 md:px-4">
+      <div className="flex-shrink-0 mr-2 md:mr-4">
         <Image src="/logo.png" alt="logo" width={32} height={32} />
       </div>
 
-      <Menu
-        theme="light"
-        mode="horizontal"
-        defaultSelectedKeys={["2"]}
-        items={items}
-        onClick={({ key }) => {
-          const item = items.find((item) => item.key === key);
-          if (item) {
-            router.push(item.router);
-          }
-        }}
-        style={{ flex: 1, minWidth: 0 }}
-      />
+      <div className="hidden md:flex flex-1">
+        <Menu
+          theme="light"
+          mode="horizontal"
+          defaultSelectedKeys={["2"]}
+          items={items}
+          onClick={({ key }) => {
+            const item = items.find((item) => item.key === key);
+            if (item) {
+              router.push(item.router);
+            }
+          }}
+          style={{ flex: 1, minWidth: 0, border: "none" }}
+        />
+      </div>
 
-      <div className="ms-auto me-4">
+      <div className="ml-auto flex items-center">
         {status === "loading" ? (
-          <div>加载中...</div>
+          <div className="text-sm text-gray-500">加载中...</div>
         ) : session?.user ? (
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-            <Space style={{ cursor: "pointer" }}>
+            <Space className="cursor-pointer">
               {session.user.image && (
                 <Image
                   src={session.user.image}
@@ -67,12 +69,18 @@ const NavBar = () => {
                   className="rounded-full"
                 />
               )}
-              <span>{session.user.name || session.user.email}</span>
-              <DownOutlined />
+              <span className="hidden sm:inline text-sm md:text-base">
+                {session.user.name || session.user.email}
+              </span>
+              <DownOutlined className="text-xs" />
             </Space>
           </Dropdown>
         ) : (
-          <Button type="link" onClick={() => router.push("/login")}>
+          <Button
+            type="link"
+            onClick={() => router.push("/login")}
+            className="text-sm md:text-base"
+          >
             登录
           </Button>
         )}
@@ -83,37 +91,23 @@ const NavBar = () => {
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer },
   } = theme.useToken();
+
   return (
     <Layout className="h-full">
       <Header
-        style={{
-          backgroundColor: "transparent",
-          position: "sticky",
-          top: 0,
-          zIndex: 1,
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-        }}
+        className="bg-transparent sticky top-0 z-10 w-full flex items-center p-0"
+        style={{ background: colorBgContainer, padding: 0 }}
       >
         <NavBar></NavBar>
       </Header>
-      <Content style={{ padding: "0 48px" }}>
-        <div
-          className="mt-4"
-          style={{
-            padding: 24,
-            minHeight: 380,
-            background: colorBgContainer,
-            borderRadius: borderRadiusLG,
-          }}
-        >
+      <Content className="w-full px-4 md:px-8">
+        <div className="mt-4 p-4 md:p-6 rounded-lg content-card bg-white">
           {children}
         </div>
       </Content>
-      <Footer style={{ textAlign: "center" }}>
+      <Footer className="text-center text-xs md:text-sm py-4">
         Sws License ©{new Date().getFullYear()} Created by rwecho
       </Footer>
     </Layout>
